@@ -7,7 +7,7 @@
             <input id="toggle-all" class="toggle-all" type="checkbox" v-model="allDone">
             <label for="toggle-all">Mark all as complete</label>
             <ul class="todo-list">
-                <li class="todo" v-for="todo in filteredTodos" :key="todo.id" :class="{completed: todo.completed, editing: todo == editedTodo}">
+                <li class="todo" v-for="todo in filteredTodos" :key="todo.ID" :class="{completed: todo.completed, editing: todo == editedTodo}">
                     <div class="view">
                         <input class="toggle" type="checkbox" v-model="todo.completed" @click="syncCompleted(todo)">
                         <label @dblclick="editTodo(todo)">{{todo.title}}</label>
@@ -19,7 +19,7 @@
         </section>
         <footer class="footer" v-show="todos.length">
             <span class="todo-count">
-                <!-- <strong v-text="remaining"></strong> {{pluralize('item', remaining)}} left -->
+                <strong v-text="remaining"></strong> {{pluralize('item', remaining)}} left
             </span>
             <ul class="filters">
                 <li><a @click="setVisibility('all')" :class="{selected: visibility == 'all'}">All</a></li>
@@ -49,7 +49,7 @@ export default {
             return this.filterTodos(this.visibility)
         },
         remaining: function () {
-            return this.filterTodos('active')
+            return this.filterTodos('active').length
         },
         allDone: {
             get: function () {
@@ -86,6 +86,8 @@ export default {
         async syncCompleted(todo) {
             try {
                 todo.completed = !todo.completed
+                // eslint-disable-next-line
+                console.log('Todo is set to: ', todo)
                 await this.$http.patch(`/todo/${todo.ID}`, todo)
                 this.fetchTodos()
             } catch (error) {
